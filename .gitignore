@@ -1,0 +1,9 @@
+pycache/
+*.pyc
+.wishper/
+.env
+temp_audio/
+*.log
+.idea/
+.vscode/
+~/.cache/whisper/
