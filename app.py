@@ -92,6 +92,6 @@ if audio_file is not None:
     st.write("Temporary file has been removed.")
 
 st.markdown("---")
-st.markdown("### Developed by: Faisal Riyadi")
+st.markdown("### Developed by: [Faisal Riyadi](https://github.com/faisalri)")
 st.markdown("#### Contact: faisalriyadi93@gmail.com")
 st.markdown("_Consistency is key; keep learning, keep growing until you master it!_")
