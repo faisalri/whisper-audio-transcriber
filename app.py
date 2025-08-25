@@ -43,7 +43,34 @@ audio_file = st.file_uploader(
 # Check if a file has been uploaded before proceeding.
 if audio_file is not None:
     st.audio(audio_file, format='audio/wav')
-    st.write("Starting transcription...")
     
-    # Create a temporary directory to store the uploaded audio file.
-    # The whisper model requires a file path, so we can't directly use the uploaded file
+    # --- The new st.status() block starts here ---
+    with st.status("Starting transcription...", expanded=True) as status:
+        st.write("Preparing to transcribe audio...")
+        
+        # Create a temporary directory to store the uploaded audio file.
+        os.makedirs("temp_audio", exist_ok=True)
+        file_path = os.path.join("temp_audio", audio_file.name)
+        
+        # Write the uploaded file to the temporary path.
+        with open(file_path, "wb") as f:
+            f.write(audio_file.getbuffer())
+
+        st.write("Transcribing audio to text...")
+        
+        # This is the core transcription logic. The UI will now show this status.
+        result = model.transcribe(file_path)
+        transcription = result["text"]
+        
+        # Update the status to show success
+        status.update(label="Transcription complete!", state="complete", expanded=False)
+
+    # --- The new st.status() block ends here ---
+    
+    # Displaying Results
+    st.subheader("Transcription Result:")
+    st.write(transcription)
+
+    # Clean up by removing the temporary file to save disk space.
+    os.remove(file_path)
+    st.write("Temporary file has been removed.")
