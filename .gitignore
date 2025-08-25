@@ -1,9 +1,18 @@
-pycache/
+# Python-specific files
+__pycache__/
 *.pyc
 .wishper/
 .env
-temp_audio/
-*.log
+
+# IDE-specific files
 .idea/
 .vscode/
+
+# Audio files (temporary or uploaded)
+temp_audio/
+
+# Log files
+*.log
+
+# Whisper model cache (large files)
 ~/.cache/whisper/
