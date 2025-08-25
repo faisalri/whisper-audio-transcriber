@@ -56,6 +56,12 @@ Bash
 `streamlit run app.py`
 Your web browser will automatically open and display the application, ready for you to transcribe your first audio file.
 
+## 💻 Powered By
+This application is built on top of the powerful and open-source Whisper model, developed by OpenAI.
+
+You can find the original model repository on GitHub:
+https://github.com/openai/whisper
+
 ##🤝 Contributing
 We welcome contributions from everyone! If you find a bug or have an idea for a new feature, feel free to open an issue or submit a pull request.
 
