@@ -140,4 +140,4 @@ with col1:
     st.markdown("_Consistency is key; keep learning, keep growing until you master it!_")
 
 with col2:
-    st.markdown("<p style='text-align: right;'>_Powered by OpenAI's open-source Whisper model._</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: right;'>Powered by OpenAI's open-source Whisper model.</p>", unsafe_allow_html=True)
