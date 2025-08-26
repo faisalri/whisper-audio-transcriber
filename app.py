@@ -14,8 +14,18 @@ if 'audio_file_name' not in st.session_state:
 
 # ---
 # Function to format transcription based on a fixed duration.
-# This function is unchanged from the previous version.
-def format_by_duration(segments, duration=35):
+# DURATION IS UPDATED TO 20 SECONDS
+def format_by_duration(segments, duration=20):
+    """
+    Formats transcription text by grouping segments into chunks of a fixed duration.
+    
+    Args:
+        segments (list): The list of segments from the Whisper result.
+        duration (int): The target duration in seconds for each text chunk.
+        
+    Returns:
+        str: The formatted transcription text.
+    """
     formatted_text = ""
     current_chunk_text = ""
     start_time = 0
@@ -26,8 +36,10 @@ def format_by_duration(segments, duration=35):
             start_sec = int(start_time % 60)
             end_min = int(segment['start'] // 60)
             end_sec = int(segment['start'] % 60)
+
             formatted_text += f"{start_min:02}:{start_sec:02} - {end_min:02}:{end_sec:02}\n"
             formatted_text += f"{current_chunk_text.strip()}\n\n"
+            
             current_chunk_text = segment['text']
             start_time = segment['start']
         else:
@@ -66,26 +78,19 @@ st.success(f"Model {model_name} successfully loaded!")
 # ---
 ## File Upload Section
 
-# Store the file uploader widget in a variable to control its state.
 uploaded_file = st.file_uploader(
     "Upload your audio file (.mp3, .wav, .m4a, etc.)",
     type=["mp3", "wav", "m4a", "ogg"]
 )
 
-# ---
-# NEW: Functions for button actions
 def start_transcription():
     st.session_state.transcribe_started = True
 
 def reset_app():
     st.session_state.transcribe_started = False
     st.session_state.audio_file_name = None
-    # We can't directly reset st.file_uploader, but resetting the session state
-    # and rerunning the app will achieve the same effect for the user.
-    st.experimental_rerun()
+    st.rerun()
 
-# ---
-# NEW: Add a button to start the process and a reset button.
 if uploaded_file is not None:
     st.audio(uploaded_file, format='audio/wav')
     col1, col2 = st.columns(2)
@@ -98,28 +103,30 @@ if uploaded_file is not None:
     # NEW: The transcription logic is now inside this conditional block.
     # It will only run if the 'transcribe_started' state is True.
     if st.session_state.transcribe_started:
-        st.write("Starting transcription...")
-        
+        # st.write("Starting transcription...") # This line is now redundant
+
+        # --- UPDATED: Enhanced st.status with more detailed steps ---
         with st.status("Starting transcription...", expanded=True) as status:
-            st.write("Preparing to transcribe audio...")
-            
+            st.write("1. Saving audio file...")
             os.makedirs("temp_audio", exist_ok=True)
             file_path = os.path.join("temp_audio", uploaded_file.name)
             
             with open(file_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
 
-            st.write("Transcribing audio to text...")
-            
+            st.write("2. Transcribing audio...")
             result = model.transcribe(file_path, verbose=False)
             
-            transcription_with_timestamps = format_by_duration(result["segments"], duration=35)
+            st.write("3. Formatting transcription with timestamps...")
+            transcription_with_timestamps = format_by_duration(result["segments"], duration=20)
+            
+            st.write("4. Cleaning up temporary files...")
+            os.remove(file_path)
             
             status.update(label="Transcription complete!", state="complete", expanded=False)
 
         # --- Displaying Results ---
         st.subheader("Transcription Result:")
-
         st.text_area(
             label="Copy Transcription:",
             value=transcription_with_timestamps,
@@ -133,8 +140,6 @@ if uploaded_file is not None:
             mime="text/plain"
         )
         
-        os.remove(file_path)
-        st.write("Temporary file has been removed.")
     
 # --- The footnote remains unchanged ---
 st.markdown("---")
