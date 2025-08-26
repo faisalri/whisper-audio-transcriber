@@ -89,7 +89,6 @@ def start_transcription():
 def reset_app():
     st.session_state.transcribe_started = False
     st.session_state.audio_file_name = None
-    st.rerun()
 
 if uploaded_file is not None:
     st.audio(uploaded_file, format='audio/wav')
