@@ -10,7 +10,6 @@ if 'transcribe_started' not in st.session_state:
     st.session_state.transcribe_started = False
 if 'audio_file_name' not in st.session_state:
     st.session_state.audio_file_name = None
-# --- NEW: Session state to store the transcription result
 if 'transcription_result' not in st.session_state:
     st.session_state.transcription_result = ""
 
@@ -80,9 +79,7 @@ def start_transcription():
 def reset_app():
     st.session_state.transcribe_started = False
     st.session_state.audio_file_name = None
-    # --- NEW: Reset the transcription result in session state
     st.session_state.transcription_result = ""
-    st.rerun()
 
 if uploaded_file is not None:
     st.audio(uploaded_file, format='audio/wav')
@@ -93,10 +90,7 @@ if uploaded_file is not None:
         st.button("Reset", on_click=reset_app)
     
     # ---
-    # NEW: Check if transcription has already been done and stored in session state
     if st.session_state.transcribe_started and st.session_state.transcription_result == "":
-        # ---
-        # The transcription logic now only runs once, when the button is clicked
         with st.status("Starting transcription...", expanded=True) as status:
             st.write("1. Saving audio file...")
             os.makedirs("temp_audio", exist_ok=True)
@@ -120,7 +114,6 @@ if uploaded_file is not None:
             status.update(label="Transcription complete!", state="complete", expanded=False)
     
     # --- Displaying Results ---
-    # NEW: Display the result from session state if it exists
     if st.session_state.transcription_result != "":
         st.subheader("Transcription Result:")
         st.text_area(
@@ -135,10 +128,16 @@ if uploaded_file is not None:
             file_name=f"{os.path.splitext(uploaded_file.name)[0]}_transcription.txt",
             mime="text/plain"
         )
-    
-# --- The footnote remains unchanged ---
+        
+# --- FOOTER SECTION: UPDATED LAYOUT ---
 st.markdown("---")
-st.markdown("### Developed by: [Faisal Riyadi](https://github.com/faisalri)")
-st.markdown("#### Contact: faisalriyadi93@gmail.com")
-st.markdown("_Powered by OpenAI's open-source Whisper model._")
-st.markdown("_Consistency is key; keep learning, keep growing until you master it!_")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("### Developed by: [Faisal Riyadi](https://github.com/faisalri)")
+    st.markdown("#### Contact: faisalriyadi93@gmail.com")
+
+with col2:
+    st.markdown("<p style='text-align: right;'>_Powered by OpenAI's open-source Whisper model._</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: right;'>_Consistency is key; keep learning, keep growing until you master it!_</p>", unsafe_allow_html=True)
