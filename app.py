@@ -137,7 +137,7 @@ col1, col2 = st.columns(2)
 with col1:
     st.markdown("### Developed by: [Faisal Riyadi](https://github.com/faisalri)")
     st.markdown("#### Contact: faisalriyadi93@gmail.com")
+    st.markdown("_Powered by OpenAI's open-source Whisper model._")
 
 with col2:
-    st.markdown("<p style='text-align: right;'>_Powered by OpenAI's open-source Whisper model._</p>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: right;'>_Consistency is key; keep learning, keep growing until you master it!_</p>", unsafe_allow_html=True)
