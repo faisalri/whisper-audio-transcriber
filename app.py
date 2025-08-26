@@ -5,27 +5,18 @@ import os
 st.set_page_config(layout="wide")
 
 # ---
-# NEW: Initialize session state to control transcription process
-# This prevents the transcription from running automatically on each rerun.
+# Initialize session state to control transcription process
 if 'transcribe_started' not in st.session_state:
     st.session_state.transcribe_started = False
 if 'audio_file_name' not in st.session_state:
     st.session_state.audio_file_name = None
+# --- NEW: Session state to store the transcription result
+if 'transcription_result' not in st.session_state:
+    st.session_state.transcription_result = ""
 
 # ---
 # Function to format transcription based on a fixed duration.
-# DURATION IS UPDATED TO 20 SECONDS
 def format_by_duration(segments, duration=20):
-    """
-    Formats transcription text by grouping segments into chunks of a fixed duration.
-    
-    Args:
-        segments (list): The list of segments from the Whisper result.
-        duration (int): The target duration in seconds for each text chunk.
-        
-    Returns:
-        str: The formatted transcription text.
-    """
     formatted_text = ""
     current_chunk_text = ""
     start_time = 0
@@ -89,6 +80,9 @@ def start_transcription():
 def reset_app():
     st.session_state.transcribe_started = False
     st.session_state.audio_file_name = None
+    # --- NEW: Reset the transcription result in session state
+    st.session_state.transcription_result = ""
+    st.rerun()
 
 if uploaded_file is not None:
     st.audio(uploaded_file, format='audio/wav')
@@ -97,14 +91,12 @@ if uploaded_file is not None:
         st.button("Start Transcribe", on_click=start_transcription)
     with col2:
         st.button("Reset", on_click=reset_app)
-
+    
     # ---
-    # NEW: The transcription logic is now inside this conditional block.
-    # It will only run if the 'transcribe_started' state is True.
-    if st.session_state.transcribe_started:
-        # st.write("Starting transcription...") # This line is now redundant
-
-        # --- UPDATED: Enhanced st.status with more detailed steps ---
+    # NEW: Check if transcription has already been done and stored in session state
+    if st.session_state.transcribe_started and st.session_state.transcription_result == "":
+        # ---
+        # The transcription logic now only runs once, when the button is clicked
         with st.status("Starting transcription...", expanded=True) as status:
             st.write("1. Saving audio file...")
             os.makedirs("temp_audio", exist_ok=True)
@@ -113,35 +105,40 @@ if uploaded_file is not None:
             with open(file_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
 
-            st.write("2. Transcribing audio...")
+            st.write("2. Transcribing audio to text...")
             result = model.transcribe(file_path, verbose=False)
             
             st.write("3. Formatting transcription with timestamps...")
-            transcription_with_timestamps = format_by_duration(result["segments"], duration=20)
+            formatted_text = format_by_duration(result["segments"], duration=20)
             
-            st.write("4. Cleaning up temporary files...")
+            st.write("4. Storing result in session state...")
+            st.session_state.transcription_result = formatted_text
+            
+            st.write("5. Cleaning up temporary files...")
             os.remove(file_path)
             
             status.update(label="Transcription complete!", state="complete", expanded=False)
-
-        # --- Displaying Results ---
+    
+    # --- Displaying Results ---
+    # NEW: Display the result from session state if it exists
+    if st.session_state.transcription_result != "":
         st.subheader("Transcription Result:")
         st.text_area(
             label="Copy Transcription:",
-            value=transcription_with_timestamps,
+            value=st.session_state.transcription_result,
             height=300
         )
 
         st.download_button(
             label="Download as Text File",
-            data=transcription_with_timestamps,
+            data=st.session_state.transcription_result,
             file_name=f"{os.path.splitext(uploaded_file.name)[0]}_transcription.txt",
             mime="text/plain"
         )
-        
     
 # --- The footnote remains unchanged ---
 st.markdown("---")
 st.markdown("### Developed by: [Faisal Riyadi](https://github.com/faisalri)")
 st.markdown("#### Contact: faisalriyadi93@gmail.com")
+st.markdown("_Powered by OpenAI's open-source Whisper model._")
 st.markdown("_Consistency is key; keep learning, keep growing until you master it!_")
