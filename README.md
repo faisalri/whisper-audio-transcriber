@@ -34,7 +34,7 @@ cd whisper-audio-transcriber
 # Step 3: Install Dependencies
 `pip install -r requirements.txt`
 
-##⚠️ Troubleshooting: Missing FFmpeg
+## ⚠️ Troubleshooting: Missing FFmpeg
 
 The whisper library, particularly when processing audio files like .mp3, .m4a, or .ogg, relies on a command-line tool called FFmpeg to handle the audio decoding and conversion. If you encounter a FileNotFoundError, it means FFmpeg is not installed or not in your system's PATH.
 
@@ -48,7 +48,7 @@ Alternatively, you can manually download the builds from a trusted source and ad
 
 Builds - CODEX FFMPEG @ gyan.dev
 
-##🚀 How to Run the App
+## 🚀 How to Run the App
 Once you've completed the installation, you can launch the application from your terminal.
 
 Bash
@@ -62,8 +62,8 @@ This application is built on top of the powerful and open-source Whisper model, 
 You can find the original model repository on GitHub:
 https://github.com/openai/whisper
 
-##🤝 Contributing
+## 🤝 Contributing
 We welcome contributions from everyone! If you find a bug or have an idea for a new feature, feel free to open an issue or submit a pull request.
 
-##📄 License
+## 📄 License
 This project is licensed under the MIT License. See the LICENSE file for more details.
